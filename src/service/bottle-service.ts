@@ -1,13 +1,54 @@
-import { BottleType } from "../model/bottle";
+import {
+  BottleType,
+  GetBottleByNameAndYearType,
+  WineTypeEnum,
+} from "../model/bottle";
 import BottleRepository from "../repository/bottle-repository";
 
 class BottleService {
   registerBottle = async (body: BottleType) => {
-    const result = await BottleRepository.registerBottles(body);
+    await BottleRepository.registerBottles(body);
+
+    return {
+      status: 201,
+      message: body,
+    };
+  };
+
+  getBottleByType = async (type: WineTypeEnum) => {
+    const result = await BottleRepository.getBottleByType(type);
 
     return {
       status: 200,
-      message: { id: result.insertedId, ...body },
+      message: result,
+    };
+  };
+
+  getAllBottles = async () => {
+    const result = await BottleRepository.getAllBottles();
+
+    return {
+      status: 200,
+      message: result,
+    };
+  };
+
+  getBottleByNameAndYear = async (body: GetBottleByNameAndYearType) => {
+    const result = await BottleRepository.getBottleByNameAndYear(
+      body.nome,
+      body.safra
+    );
+
+    if (result == null) {
+      return {
+        status: 404,
+        message: "Bottle not found"
+      }
+    }
+    
+    return {
+      status: 200,
+      message: result,
     };
   };
 }
